@@ -3,22 +3,37 @@
   "version": "0.0.1",
   "description": "A platform to track software development features",
   "devDependencies": {
+    "@types/chalk": "^2.2.0",
+    "@types/graphql": "^14.0.4",
     "@types/node": "^10.12.10",
+    "chalk": "^2.4.1",
+    "graphql-code-generator": "^0.15.2",
+    "graphql-codegen-introspection": "^0.15.2",
+    "graphql-codegen-typescript-common": "0.15.2",
+    "graphql-codegen-typescript-resolvers": "0.15.2",
+    "graphql-codegen-typescript-server": "0.15.2",
     "nodemon": "^1.18.9",
+    "prettier": "^1.15.3",
     "ts-node": "7.0.1",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.17.0",
+    "tslint-react": "^3.6.0",
     "typescript": "3.1.6"
   },
   "dependencies": {
     "apollo-server": "^2.2.5",
+    "apollo-server-express": "^2.3.1",
+    "cors": "^2.8.5",
+    "express": "^4.16.4",
     "gql": "^1.1.2",
     "graphql": "^14.0.2",
+    "merge-graphql-schemas": "^1.5.8",
     "pg": "^7.6.1",
     "reflect-metadata": "^0.1.12",
     "typeorm": "0.2.9"
   },
   "scripts": {
-    "start": "nodemon --exec ts-node src/index.ts"
+    "start": "nodemon --exec ts-node src/index.ts",
+    "generate": "gql-gen --config codegen.yml"
   }
 }
