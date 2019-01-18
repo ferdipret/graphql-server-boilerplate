@@ -21,11 +21,9 @@ export interface Query {
 export interface User {
   userId: string;
 
-  username: string;
+  email: string;
 
-  firstname: string;
-
-  lastname: string;
+  password: string;
 }
 
 export interface Mutation {
@@ -134,11 +132,9 @@ export namespace UserResolvers {
   export interface Resolvers<Context = {}, TypeParent = User> {
     userId?: UserIdResolver<string, TypeParent, Context>;
 
-    username?: UsernameResolver<string, TypeParent, Context>;
+    email?: EmailResolver<string, TypeParent, Context>;
 
-    firstname?: FirstnameResolver<string, TypeParent, Context>;
-
-    lastname?: LastnameResolver<string, TypeParent, Context>;
+    password?: PasswordResolver<string, TypeParent, Context>;
   }
 
   export type UserIdResolver<
@@ -146,17 +142,12 @@ export namespace UserResolvers {
     Parent = User,
     Context = {}
   > = Resolver<R, Parent, Context>;
-  export type UsernameResolver<
-    R = string,
-    Parent = User,
-    Context = {}
-  > = Resolver<R, Parent, Context>;
-  export type FirstnameResolver<
-    R = string,
-    Parent = User,
-    Context = {}
-  > = Resolver<R, Parent, Context>;
-  export type LastnameResolver<
+  export type EmailResolver<R = string, Parent = User, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context
+  >;
+  export type PasswordResolver<
     R = string,
     Parent = User,
     Context = {}

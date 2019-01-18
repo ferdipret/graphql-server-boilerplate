@@ -10,13 +10,13 @@ import { schema } from './schemaValidator'
 const users: any = [
   {
     userId: '1',
-    firstname: 'Jim',
-    lastname: 'Pope',
+    email: 'jimpope@gmail.com',
+    password: 'jimmy2cent',
   },
   {
     userId: '2',
-    firstname: 'Joe',
-    lastname: 'Bloggs',
+    email: 'joebloggs@gmail.com',
+    password: 'joey2cent',
   },
 ]
 
@@ -27,12 +27,6 @@ export const userRegistrationResolver: IResolvers = {
     },
     user: (_, { userId }) => {
       return users.find((id: string) => id === userId)
-    },
-  },
-
-  User: {
-    username: parent => {
-      return `${parent.firstname} ${parent.lastname}`
     },
   },
 

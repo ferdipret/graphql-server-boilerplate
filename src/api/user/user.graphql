@@ -8,9 +8,8 @@ type Query {
 
 type User {
   userId: ID!
-  username: String!
-  firstname: String!
-  lastname: String!
+  email: String!
+  password: String!
 }
 
 type Mutation {
