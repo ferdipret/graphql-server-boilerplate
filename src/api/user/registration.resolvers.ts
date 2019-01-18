@@ -1,29 +1,32 @@
-import { IResolvers } from '../../../generated/graphql'
-import { User } from '../../entities/user'
-import { ResolverMap } from '../resolvers'
+import * as bcrypt from 'bcrypt'
+import * as jwt from 'jsonwebtoken'
+
+import { IResolvers } from '../../generated/graphql'
+import { User } from '../../models/user'
+import { formatYupError } from '../../utils/formatYupError'
 import { duplicateEmail } from './constants'
 import { schema } from './schemaValidator'
 
-const users: any = {
-  1: {
-    userID: 1,
+const users: any = [
+  {
+    userId: '1',
     firstname: 'Jim',
     lastname: 'Pope',
   },
-  2: {
-    userID: 2,
+  {
+    userId: '2',
     firstname: 'Joe',
     lastname: 'Bloggs',
   },
-}
+]
 
-export const userResolver: ResolverMap = {
+export const userRegistrationResolver: IResolvers = {
   Query: {
     users: () => {
       return Object.values(users)
     },
-    user: (_, { userID }) => {
-      return users[userID]
+    user: (_, { userId }) => {
+      return users.find((id: string) => id === userId)
     },
   },
 
@@ -38,9 +41,9 @@ export const userResolver: ResolverMap = {
       /** First we need to validate that the incoming arguements match the schema. */
       try {
         await schema.validate(args, { abortEarly: false })
-      } catch {
-        /** If the schema doesn't match, we'll use a early return statement. */
-        return 'Schema is not valid'
+      } catch (error) {
+        /** If the schema doesn't match, we'll use an early return statement. */
+        return formatYupError(error)
       }
       const { email, password } = args
 
@@ -64,25 +67,17 @@ export const userResolver: ResolverMap = {
        * If we reach this point, we have a valid schema and the user doesn't yet exist.
        * Therefor we can go ahead and create the user.
        */
+      const saltRounds: number = 10
       const user: User = User.create({
         email,
-        password,
+        password: await bcrypt.hash(password, saltRounds),
       })
 
-      /**
-       * Don't forget to save, so we actually write the new entry into the database.
-       */
+      /** Don't forget to save, so we actually write the new entry into the database. */
       await user.save()
 
-      // if (process.env.NODE_ENV !== "test") {
-      //   await sendEmail(
-      //     email,
-      //     await createConfirmEmailLink(url, user.id, redis)
-      //   );
-      // }
-
-      /** For now we don't need to return anything when this mutation completes successfully. */
-      return null
+      /** Return json web token */
+      return jwt.sign({ id: user.id, email: user.email }, 'shhhhhhhh-secret', { expiresIn: '1y' })
     },
   },
 }

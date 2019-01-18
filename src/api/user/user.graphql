@@ -1,0 +1,18 @@
+scalar Error
+
+type Query {
+  me: User
+  user(userId: ID!): User
+  users: [User!]
+}
+
+type User {
+  userId: ID!
+  username: String!
+  firstname: String!
+  lastname: String!
+}
+
+type Mutation {
+  register(email: String!, password: String!): Error!
+}

@@ -1,5 +1,11 @@
 export type Maybe<T> = T | null;
 
+export type Error = any;
+
+// ====================================================
+// Scalars
+// ====================================================
+
 // ====================================================
 // Types
 // ====================================================
@@ -13,7 +19,7 @@ export interface Query {
 }
 
 export interface User {
-  userID: string;
+  userId: string;
 
   username: string;
 
@@ -22,15 +28,28 @@ export interface User {
   lastname: string;
 }
 
+export interface Mutation {
+  register: Error;
+}
+
 // ====================================================
 // Arguments
 // ====================================================
 
 export interface UserQueryArgs {
-  userID: string;
+  userId: string;
+}
+export interface RegisterMutationArgs {
+  email: string;
+
+  password: string;
 }
 
-import { GraphQLResolveInfo } from "graphql";
+import {
+  GraphQLResolveInfo,
+  GraphQLScalarType,
+  GraphQLScalarTypeConfig
+} from "graphql";
 
 export type Resolver<Result, Parent = {}, Context = {}, Args = {}> = (
   parent: Parent,
@@ -101,7 +120,7 @@ export namespace QueryResolvers {
     Context = {}
   > = Resolver<R, Parent, Context, UserArgs>;
   export interface UserArgs {
-    userID: string;
+    userId: string;
   }
 
   export type UsersResolver<
@@ -113,7 +132,7 @@ export namespace QueryResolvers {
 
 export namespace UserResolvers {
   export interface Resolvers<Context = {}, TypeParent = User> {
-    userID?: UserIdResolver<string, TypeParent, Context>;
+    userId?: UserIdResolver<string, TypeParent, Context>;
 
     username?: UsernameResolver<string, TypeParent, Context>;
 
@@ -142,6 +161,24 @@ export namespace UserResolvers {
     Parent = User,
     Context = {}
   > = Resolver<R, Parent, Context>;
+}
+
+export namespace MutationResolvers {
+  export interface Resolvers<Context = {}, TypeParent = {}> {
+    register?: RegisterResolver<Error, TypeParent, Context>;
+  }
+
+  export type RegisterResolver<R = Error, Parent = {}, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context,
+    RegisterArgs
+  >;
+  export interface RegisterArgs {
+    email: string;
+
+    password: string;
+  }
 }
 
 /** Directs the executor to skip this field or fragment when the `if` argument is true. */
@@ -177,9 +214,15 @@ export interface DeprecatedDirectiveArgs {
   reason?: string;
 }
 
+export interface ErrorScalarConfig extends GraphQLScalarTypeConfig<Error, any> {
+  name: "Error";
+}
+
 export interface IResolvers {
   Query?: QueryResolvers.Resolvers;
   User?: UserResolvers.Resolvers;
+  Mutation?: MutationResolvers.Resolvers;
+  Error?: GraphQLScalarType;
 }
 
 export interface IDirectiveResolvers<Result> {

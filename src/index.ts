@@ -5,8 +5,7 @@ import chalk from 'chalk'
 import * as cors from 'cors'
 import * as express from 'express'
 
-import resolvers from './models/resolvers'
-import typeDefs from './models/schema'
+import { resolvers, typeDefs } from './api'
 import { log } from './utils/logger'
 
 const DEV_PORT: number = 1337
@@ -14,8 +13,8 @@ const PORT: number = (process.env.PORT || DEV_PORT) as number
 const PORT_PRINTER: TemplateStringsArray | string = PORT.toString()
 
 /**
- * Initialise the express app
- * This will become a middleware for the apollo server
+ * Initialise the express app.
+ * This will become a middleware for the apollo server.
  */
 const app: express.Application = express()
 
@@ -23,7 +22,7 @@ const app: express.Application = express()
 app.use(cors())
 
 /**
- * Instantiate the ApolloServer
+ * Instantiate the ApolloServer.
  */
 const server: ApolloServer = new ApolloServer({
   typeDefs,
@@ -31,12 +30,12 @@ const server: ApolloServer = new ApolloServer({
 })
 
 /**
- * Apply the express ass middleware to the graphql server
+ * Apply the express as middleware to the graphql server.
  */
 server.applyMiddleware({ app, path: '/api' })
 
 /**
- * Start up the server
+ * Start up the server.
  */
 app.listen({ port: PORT }, () => {
   log(
