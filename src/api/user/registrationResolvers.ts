@@ -4,7 +4,7 @@ import * as jwt from 'jsonwebtoken'
 import { IResolvers } from '../../generated/graphql'
 import { User } from '../../models/user'
 import { formatYupError } from '../../utils/formatYupError'
-import { duplicateEmail } from './constants'
+import { DUPLICATE_EMAIL } from './constants'
 import { schema } from './schemaValidator'
 
 const users: any = [
@@ -58,7 +58,7 @@ export const userRegistrationResolver: IResolvers = {
         return [
           {
             path: 'email',
-            message: duplicateEmail,
+            message: DUPLICATE_EMAIL,
           },
         ]
       }
