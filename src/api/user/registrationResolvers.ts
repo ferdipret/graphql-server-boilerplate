@@ -70,7 +70,7 @@ export const userRegistrationResolver: IResolvers = {
       /** Don't forget to save, so we actually write the new entry into the database. */
       await user.save()
 
-      /** Return json web token */
+      /** Return json web token. */
       return jwt.sign({ id: user.id, email: user.email }, 'shhhhhhhh-secret', { expiresIn: '1y' })
     },
   },
