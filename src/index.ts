@@ -5,7 +5,7 @@ import chalk from 'chalk'
 import * as cors from 'cors'
 import { config } from 'dotenv'
 import * as express from 'express'
-import { ConnectionOptions, createConnection, getConnectionOptions } from 'typeorm'
+import { Connection, ConnectionOptions, createConnection, getConnectionOptions } from 'typeorm'
 
 import { resolvers, typeDefs } from './api'
 import { log } from './utils/logger'
@@ -21,47 +21,48 @@ const PORT_PRINTER: TemplateStringsArray | string = PORT.toString()
  *
  * We'll need to use this connection throughout the app so we'll store it in a variable.
  */
-const connection: any = (async () => {
+const connection: Promise<Connection> = (async () => {
   const connectionOptions: ConnectionOptions = await getConnectionOptions()
 
   /**
    * Once we have the connection options we can create the connection by giving a connection name.
    */
-  createConnection({ ...connectionOptions, name: 'default' })
-    .then(() => {
-      /**
-       * Initialise the express app.
-       * This will become a middleware for the apollo server.
-       */
-      const app: express.Application = express()
+  const connectionInitializer: Connection = await createConnection({
+    ...connectionOptions,
+    name: 'default',
+  })
 
-      // Writing this comment made me realise I know very little about cors...
-      app.use(cors())
+  /**
+   * Initialise the express app.
+   * This will become a middleware for the apollo server.
+   */
+  const app: express.Application = express()
 
-      /** Instantiate the ApolloServer. */
-      const server: ApolloServer = new ApolloServer({
-        typeDefs,
-        resolvers,
-      })
+  // Writing this comment made me realise I know very little about cors...
+  app.use(cors())
 
-      /** Apply the express as middleware to the graphql server. */
-      server.applyMiddleware({ app, path: '/api' })
+  /** Instantiate the ApolloServer. */
+  const server: ApolloServer = new ApolloServer({
+    typeDefs,
+    resolvers,
+  })
 
-      /** Start up the server. */
-      app.listen({ port: PORT }, () => {
-        log(
-          chalk.bold.green(
-            `
+  /** Apply the express as middleware to the graphql server. */
+  server.applyMiddleware({ app, path: '/api' })
+
+  /** Start up the server. */
+  app.listen({ port: PORT }, () => {
+    log(
+      chalk.bold.green(
+        `
 Server is running on localhost:${chalk.underline.yellow(PORT_PRINTER)}
 ${chalk.dim.blue('GraphQL Playground route is `/api`')}
       `,
-          ),
-        )
-      })
-    })
-    .catch(error => {
-      log(error)
-    })
+      ),
+    )
+  })
+
+  return connectionInitializer
 })()
 
 export { connection }

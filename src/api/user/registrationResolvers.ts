@@ -4,6 +4,8 @@ import * as jwt from 'jsonwebtoken'
 import { IResolvers } from '../../generated/graphql'
 import { User } from '../../models/user'
 import { formatYupError } from '../../utils/formatYupError'
+import { log } from '../../utils/logger'
+import { sendEmail } from '../../utils/sendEmail'
 import { DUPLICATE_EMAIL } from './constants'
 import { schema } from './schemaValidator'
 
@@ -66,6 +68,8 @@ export const userRegistrationResolver: IResolvers = {
         email,
         password: await bcrypt.hash(password, saltRounds),
       })
+
+      sendEmail({ recipient: 'ferdinandpretorius@gmail.com', url: 'reddit.com/r/unixporn' })
 
       /** Don't forget to save, so we actually write the new entry into the database. */
       await user.save()
