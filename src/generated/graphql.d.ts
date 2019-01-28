@@ -28,6 +28,8 @@ export interface User {
 
 export interface Mutation {
   register: Error;
+
+  verify: Error;
 }
 
 // ====================================================
@@ -41,6 +43,9 @@ export interface RegisterMutationArgs {
   email: string;
 
   password: string;
+}
+export interface VerifyMutationArgs {
+  token: string;
 }
 
 import {
@@ -157,6 +162,8 @@ export namespace UserResolvers {
 export namespace MutationResolvers {
   export interface Resolvers<Context = {}, TypeParent = {}> {
     register?: RegisterResolver<Error, TypeParent, Context>;
+
+    verify?: VerifyResolver<Error, TypeParent, Context>;
   }
 
   export type RegisterResolver<R = Error, Parent = {}, Context = {}> = Resolver<
@@ -169,6 +176,16 @@ export namespace MutationResolvers {
     email: string;
 
     password: string;
+  }
+
+  export type VerifyResolver<R = Error, Parent = {}, Context = {}> = Resolver<
+    R,
+    Parent,
+    Context,
+    VerifyArgs
+  >;
+  export interface VerifyArgs {
+    token: string;
   }
 }
 

@@ -1,4 +1,5 @@
 import * as bcrypt from 'bcrypt'
+import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
@@ -8,6 +9,8 @@ import { log } from '../../utils/logger'
 import { sendEmail } from '../../utils/sendEmail'
 import { DUPLICATE_EMAIL } from './constants'
 import { schema } from './schemaValidator'
+
+config()
 
 const users: any = [
   {
@@ -43,7 +46,7 @@ export const userRegistrationResolver: IResolvers = {
       }
       const { email, password } = args
 
-      /** Next we'll see whether this user already exists */
+      /** Next we'll see whether this user already exists. */
       const userAlreadyExists: User | undefined = await User.findOne({
         where: { email },
         select: ['id'],
@@ -63,19 +66,49 @@ export const userRegistrationResolver: IResolvers = {
        * If we reach this point, we have a valid schema and the user doesn't yet exist.
        * Therefor we can go ahead and create the user.
        */
-      const saltRounds: number = 10
+      const saltRounds: number = 16
       const user: User = User.create({
         email,
         password: await bcrypt.hash(password, saltRounds),
       })
 
-      sendEmail({ recipient: 'ferdinandpretorius@gmail.com', url: 'reddit.com/r/unixporn' })
-
       /** Don't forget to save, so we actually write the new entry into the database. */
       await user.save()
 
-      /** Return json web token. */
-      return jwt.sign({ id: user.id, email: user.email }, 'shhhhhhhh-secret', { expiresIn: '1y' })
+      /** Sign json web token. */
+      const token: string = jwt.sign(
+        { id: user.id, email: user.email },
+        process.env.JWT_SECRET as string,
+        {
+          expiresIn: '7d',
+        },
+      )
+
+      /** Send verification email. */
+      sendEmail({
+        recipient: 'ferdinandpretorius@gmail.com',
+        url: `http://localhost:7331/validate-email/${token}`,
+      })
+
+      return token
+    },
+
+    verify: async (_, args) => {
+      /** If a valid token is returned we need to store it so we can decode the token. */
+      let validToken: string | object
+      const token: string = args.token
+
+      try {
+        /** Verify that the token is indeed valid. */
+        validToken = jwt.verify(token, process.env.JWT_SECRET as string)
+      } catch (error) {
+        return error
+      }
+
+      if (validToken) {
+        /** Decode and return the token data. */
+        return jwt.decode(token)
+      }
     },
   },
 }
