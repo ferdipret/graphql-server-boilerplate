@@ -3,7 +3,7 @@ import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
-import { User } from '../../models/user'
+import { getUserByEmail, User } from '../../models/user'
 import { formatYupError } from '../../utils/formatYupError'
 import { log } from '../../utils/logger'
 import { sendEmail } from '../../utils/sendEmail'
@@ -96,6 +96,7 @@ export const userRegistrationResolver: IResolvers = {
     verify: async (_, args) => {
       /** If a valid token is returned we need to store it so we can decode the token. */
       let validToken: string | object
+      let tokenData: string | { [key: string]: any } | null
       const token: string = args.token
 
       try {
@@ -107,7 +108,11 @@ export const userRegistrationResolver: IResolvers = {
 
       if (validToken) {
         /** Decode and return the token data. */
-        return jwt.decode(token)
+        tokenData = jwt.decode(token) as object
+
+        const user: any = await getUserByEmail(tokenData.email)
+
+        return user
       }
     },
   },
