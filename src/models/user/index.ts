@@ -1,2 +1,2 @@
 export { User } from './user.entity'
-export { getUserByEmail, verifyUser } from './user.repository'
+export { getUserByEmail, getUserByToken, verifyUser } from './user.repository'

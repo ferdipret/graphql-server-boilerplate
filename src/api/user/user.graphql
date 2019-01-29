@@ -14,6 +14,11 @@ type User {
 }
 
 type Mutation {
+  # Registration Resolvers
   register(email: String!, password: String!): Error!
   verify(token: String!): Error!
+
+  # Login Resolvers
+  loginWithCredentials(email: String!, password: String!): Error!
+  loginWithToken(token: String!): Error!
 }

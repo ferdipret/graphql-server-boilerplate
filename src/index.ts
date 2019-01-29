@@ -8,6 +8,7 @@ import * as express from 'express'
 import { Connection, ConnectionOptions, createConnection, getConnectionOptions } from 'typeorm'
 
 import { resolvers, typeDefs } from './api'
+import { getUserByToken, User } from './models/user'
 import { log } from './utils/logger'
 
 config()
@@ -45,6 +46,16 @@ const connection: Promise<Connection> = (async () => {
   const server: ApolloServer = new ApolloServer({
     typeDefs,
     resolvers,
+    context: async ({ req }: any) => {
+      // Get the user token from the headers.
+      const token: string = req.headers.authorization || ''
+
+      // Try to retrieve a user with the token.
+      const user: User | undefined = await getUserByToken(token)
+
+      // Add the user to the context.
+      return { user }
+    },
   })
 
   /** Apply the express as middleware to the graphql server. */

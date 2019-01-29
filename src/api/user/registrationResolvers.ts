@@ -97,7 +97,7 @@ export const userRegistrationResolver: IResolvers = {
       /** If a valid token is returned we need to store it so we can decode the token. */
       let validToken: string | object
       let tokenData: string | { [key: string]: any } | null
-      const token: string = args.token
+      const { token } = args
 
       try {
         /** Verify that the token is indeed valid. */
@@ -115,7 +115,17 @@ export const userRegistrationResolver: IResolvers = {
         if (user) {
           const userVerified: User | undefined = await verifyUser(user.id)
 
-          return userVerified
+          /** Before returning the new token, let's make sure our user is not undefined */
+          return (
+            userVerified &&
+            jwt.sign(
+              { id: userVerified.id, email: userVerified.email },
+              process.env.JWT_SECRET as string,
+              {
+                expiresIn: '1y',
+              },
+            )
+          )
         }
       }
 

@@ -32,6 +32,10 @@ export interface Mutation {
   register: Error;
 
   verify: Error;
+
+  loginWithCredentials: Error;
+
+  loginWithToken: Error;
 }
 
 // ====================================================
@@ -47,6 +51,14 @@ export interface RegisterMutationArgs {
   password: string;
 }
 export interface VerifyMutationArgs {
+  token: string;
+}
+export interface LoginWithCredentialsMutationArgs {
+  email: string;
+
+  password: string;
+}
+export interface LoginWithTokenMutationArgs {
   token: string;
 }
 
@@ -173,6 +185,14 @@ export namespace MutationResolvers {
     register?: RegisterResolver<Error, TypeParent, Context>;
 
     verify?: VerifyResolver<Error, TypeParent, Context>;
+
+    loginWithCredentials?: LoginWithCredentialsResolver<
+      Error,
+      TypeParent,
+      Context
+    >;
+
+    loginWithToken?: LoginWithTokenResolver<Error, TypeParent, Context>;
   }
 
   export type RegisterResolver<R = Error, Parent = {}, Context = {}> = Resolver<
@@ -194,6 +214,26 @@ export namespace MutationResolvers {
     VerifyArgs
   >;
   export interface VerifyArgs {
+    token: string;
+  }
+
+  export type LoginWithCredentialsResolver<
+    R = Error,
+    Parent = {},
+    Context = {}
+  > = Resolver<R, Parent, Context, LoginWithCredentialsArgs>;
+  export interface LoginWithCredentialsArgs {
+    email: string;
+
+    password: string;
+  }
+
+  export type LoginWithTokenResolver<
+    R = Error,
+    Parent = {},
+    Context = {}
+  > = Resolver<R, Parent, Context, LoginWithTokenArgs>;
+  export interface LoginWithTokenArgs {
     token: string;
   }
 }
