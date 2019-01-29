@@ -8,4 +8,13 @@ async function getUserByEmail(email: string) {
   return user
 }
 
-export { getUserByEmail }
+async function verifyUser(id: string) {
+  const userRepository: Repository<User> = getRepository(User)
+  await userRepository.update({ id }, { isVerified: true })
+
+  const verifiedUser: User | undefined = await userRepository.findOne({ id })
+
+  return verifiedUser
+}
+
+export { getUserByEmail, verifyUser }

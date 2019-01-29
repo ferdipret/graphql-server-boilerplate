@@ -3,9 +3,8 @@ import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
-import { getUserByEmail, User } from '../../models/user'
+import { getUserByEmail, User, verifyUser } from '../../models/user'
 import { formatYupError } from '../../utils/formatYupError'
-import { log } from '../../utils/logger'
 import { sendEmail } from '../../utils/sendEmail'
 import { DUPLICATE_EMAIL } from './constants'
 import { schema } from './schemaValidator'
@@ -70,6 +69,7 @@ export const userRegistrationResolver: IResolvers = {
       const user: User = User.create({
         email,
         password: await bcrypt.hash(password, saltRounds),
+        isVerified: false,
       })
 
       /** Don't forget to save, so we actually write the new entry into the database. */
@@ -110,10 +110,16 @@ export const userRegistrationResolver: IResolvers = {
         /** Decode and return the token data. */
         tokenData = jwt.decode(token) as object
 
-        const user: any = await getUserByEmail(tokenData.email)
+        const user: User | undefined = await getUserByEmail(tokenData.email)
 
-        return user
+        if (user) {
+          const userVerified: User | undefined = await verifyUser(user.id)
+
+          return userVerified
+        }
       }
+
+      return null
     },
   },
 }

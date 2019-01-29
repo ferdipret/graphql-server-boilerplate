@@ -10,6 +10,7 @@ type User {
   userId: ID!
   email: String!
   password: String!
+  isVerified: Boolean!
 }
 
 type Mutation {

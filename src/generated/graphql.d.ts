@@ -24,6 +24,8 @@ export interface User {
   email: string;
 
   password: string;
+
+  isVerified: boolean;
 }
 
 export interface Mutation {
@@ -140,6 +142,8 @@ export namespace UserResolvers {
     email?: EmailResolver<string, TypeParent, Context>;
 
     password?: PasswordResolver<string, TypeParent, Context>;
+
+    isVerified?: IsVerifiedResolver<boolean, TypeParent, Context>;
   }
 
   export type UserIdResolver<
@@ -154,6 +158,11 @@ export namespace UserResolvers {
   >;
   export type PasswordResolver<
     R = string,
+    Parent = User,
+    Context = {}
+  > = Resolver<R, Parent, Context>;
+  export type IsVerifiedResolver<
+    R = boolean,
     Parent = User,
     Context = {}
   > = Resolver<R, Parent, Context>;

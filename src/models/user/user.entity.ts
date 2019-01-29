@@ -10,4 +10,7 @@ export class User extends BaseEntity {
 
   @Column('text')
   public password: string
+
+  @Column('boolean')
+  public isVerified: boolean
 }
