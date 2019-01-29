@@ -1,8 +1,11 @@
 import * as bcrypt from 'bcrypt'
+import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
 import { User } from '../../models/user'
+
+config()
 
 export const userLoginResolver: IResolvers = {
   Mutation: {
