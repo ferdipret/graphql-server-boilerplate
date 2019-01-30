@@ -1,8 +1,6 @@
 import * as bcrypt from 'bcrypt'
-import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 
-import { IGraphQLContext } from '../../context'
 import { IResolvers } from '../../generated/graphql'
 import { User } from '../../models/user'
 
