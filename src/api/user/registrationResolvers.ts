@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
-import { getUserByEmail, User, verifyUser } from '../../models/user'
+import { getUserByEmail, User, UserRoleType, verifyUser } from '../../models/user'
 import { formatYupError } from '../../utils/formatYupError'
 import { sendEmail } from '../../utils/sendEmail'
 import { DUPLICATE_EMAIL } from './constants'
@@ -67,6 +67,8 @@ export const userRegistrationResolver: IResolvers = {
         email,
         password: await bcrypt.hash(password, saltRounds),
         isVerified: false,
+        hasRequestedPasswordReset: false,
+        role: UserRoleType.User,
       })
 
       /** Don't forget to save, so we actually write the new entry into the database. */

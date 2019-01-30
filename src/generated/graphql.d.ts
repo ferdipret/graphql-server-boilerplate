@@ -1,5 +1,11 @@
 export type Maybe<T> = T | null;
 
+export enum UserRoleType {
+  Admin = "admin",
+  User = "user",
+  Ghost = "ghost"
+}
+
 export type Error = any;
 
 // ====================================================
@@ -26,6 +32,10 @@ export interface User {
   password: string;
 
   isVerified: boolean;
+
+  hasRequestedPasswordReset: boolean;
+
+  role: UserRoleType[];
 }
 
 export interface Mutation {
@@ -159,6 +169,14 @@ export namespace UserResolvers {
     password?: PasswordResolver<string, TypeParent, Context>;
 
     isVerified?: IsVerifiedResolver<boolean, TypeParent, Context>;
+
+    hasRequestedPasswordReset?: HasRequestedPasswordResetResolver<
+      boolean,
+      TypeParent,
+      Context
+    >;
+
+    role?: RoleResolver<UserRoleType[], TypeParent, Context>;
   }
 
   export type UserIdResolver<
@@ -178,6 +196,16 @@ export namespace UserResolvers {
   > = Resolver<R, Parent, Context>;
   export type IsVerifiedResolver<
     R = boolean,
+    Parent = User,
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context>;
+  export type HasRequestedPasswordResetResolver<
+    R = boolean,
+    Parent = User,
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context>;
+  export type RoleResolver<
+    R = UserRoleType[],
     Parent = User,
     Context = IGraphQLContext
   > = Resolver<R, Parent, Context>;

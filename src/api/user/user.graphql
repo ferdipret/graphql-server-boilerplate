@@ -1,9 +1,9 @@
 scalar Error
 
-type Query {
-  me: User
-  user(userId: ID!): User
-  users: [User!]
+enum UserRoleType {
+  admin
+  user
+  ghost
 }
 
 type User {
@@ -11,6 +11,14 @@ type User {
   email: String!
   password: String!
   isVerified: Boolean!
+  hasRequestedPasswordReset: Boolean!
+  role: [UserRoleType!]!
+}
+
+type Query {
+  me: User
+  user(userId: ID!): User
+  users: [User!]
 }
 
 type Mutation {

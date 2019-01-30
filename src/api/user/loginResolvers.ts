@@ -4,6 +4,18 @@ import * as jwt from 'jsonwebtoken'
 import { IResolvers } from '../../generated/graphql'
 import { User } from '../../models/user'
 
+/**
+ * In general, we'll be handling authorization the way apollo recommends. By checking the token in
+ * the context handler, and adding the user based on the token to the context. This means, when we
+ * login, we need to return a token to the client. The client in turn will sent this token with
+ * every subsequent query.
+ *
+ * Therefore we can login using 2 methods, when the user already has a token, the client should use
+ * the `loginWithToken` method, which will simply check the token is still valid and return it as
+ * is. This will avoid the case that a user will never need to login again. If a user logs in using
+ * their credentials, the client should use the `loginWithCredentials` method, here we can refresh
+ * the expiry date on the token, and send a fresh token.
+ */
 export const userLoginResolver: IResolvers = {
   Mutation: {
     loginWithCredentials: async (_, args, context) => {
