@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt'
-import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
@@ -8,8 +7,6 @@ import { formatYupError } from '../../utils/formatYupError'
 import { sendEmail } from '../../utils/sendEmail'
 import { DUPLICATE_EMAIL } from './constants'
 import { schema } from './schemaValidator'
-
-config()
 
 const users: any = [
   {
@@ -35,7 +32,7 @@ export const userRegistrationResolver: IResolvers = {
   },
 
   Mutation: {
-    register: async (_, args) => {
+    register: async (_, args, context) => {
       /** First we need to validate that the incoming arguements match the schema. */
       try {
         await schema.validate(args, { abortEarly: false })
@@ -75,14 +72,12 @@ export const userRegistrationResolver: IResolvers = {
       /** Don't forget to save, so we actually write the new entry into the database. */
       await user.save()
 
+      const { session } = context
+
       /** Sign json web token. */
-      const token: string = jwt.sign(
-        { id: user.id, email: user.email },
-        process.env.JWT_SECRET as string,
-        {
-          expiresIn: '7d',
-        },
-      )
+      const token: string = jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, {
+        expiresIn: '7d',
+      })
 
       /** Send verification email. */
       sendEmail({
@@ -93,15 +88,16 @@ export const userRegistrationResolver: IResolvers = {
       return token
     },
 
-    verify: async (_, args) => {
+    verify: async (_, args, context) => {
       /** If a valid token is returned we need to store it so we can decode the token. */
       let validToken: string | object
       let tokenData: string | { [key: string]: any } | null
       const { token } = args
+      const { session } = context
 
       try {
         /** Verify that the token is indeed valid. */
-        validToken = jwt.verify(token, process.env.JWT_SECRET as string)
+        validToken = jwt.verify(token, session.jwtSecret)
       } catch (error) {
         return error
       }
@@ -118,13 +114,9 @@ export const userRegistrationResolver: IResolvers = {
           /** Before returning the new token, let's make sure our user is not undefined */
           return (
             userVerified &&
-            jwt.sign(
-              { id: userVerified.id, email: userVerified.email },
-              process.env.JWT_SECRET as string,
-              {
-                expiresIn: '1y',
-              },
-            )
+            jwt.sign({ id: userVerified.id, email: userVerified.email }, session.jwtSecret, {
+              expiresIn: '1y',
+            })
           )
         }
       }

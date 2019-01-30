@@ -39,7 +39,6 @@ const connection: Promise<Connection> = (async () => {
    */
   const app: express.Application = express()
 
-  // Writing this comment made me realise I know very little about cors...
   app.use(cors())
 
   /** Instantiate the ApolloServer. */
@@ -53,8 +52,16 @@ const connection: Promise<Connection> = (async () => {
       // Try to retrieve a user with the token.
       const user: User | undefined = await getUserByToken(token)
 
+      if (!user) {
+        throw new Error('You must be logged in!')
+      }
+
+      const session: any = {
+        jwtSecret: process.env.JWT_SECRET,
+      }
+
       // Add the user to the context.
-      return { user }
+      return { user, session }
     },
   })
 

@@ -3,6 +3,8 @@ schema: "./src/api/**/*.graphql"
 documents: null
 generates:
   src/generated/graphql.d.ts:
+    config:
+      contextType: "../context#IGraphQLContext"
     plugins:
       - "typescript-common"
       - "typescript-server"

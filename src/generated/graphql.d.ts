@@ -29,10 +29,11 @@ export interface User {
 }
 
 export interface Mutation {
+  /** Registration Resolvers */
   register: Error;
 
   verify: Error;
-
+  /** Login Resolvers */
   loginWithCredentials: Error;
 
   loginWithToken: Error;
@@ -67,6 +68,8 @@ import {
   GraphQLScalarType,
   GraphQLScalarTypeConfig
 } from "graphql";
+
+import { IGraphQLContext } from "../context";
 
 export type Resolver<Result, Parent = {}, Context = {}, Args = {}> = (
   parent: Parent,
@@ -118,7 +121,7 @@ export type DirectiveResolverFn<TResult, TArgs = {}, TContext = {}> = (
 ) => TResult | Promise<TResult>;
 
 export namespace QueryResolvers {
-  export interface Resolvers<Context = {}, TypeParent = {}> {
+  export interface Resolvers<Context = IGraphQLContext, TypeParent = {}> {
     me?: MeResolver<Maybe<User>, TypeParent, Context>;
 
     user?: UserResolver<Maybe<User>, TypeParent, Context>;
@@ -126,15 +129,15 @@ export namespace QueryResolvers {
     users?: UsersResolver<Maybe<User[]>, TypeParent, Context>;
   }
 
-  export type MeResolver<R = Maybe<User>, Parent = {}, Context = {}> = Resolver<
-    R,
-    Parent,
-    Context
-  >;
+  export type MeResolver<
+    R = Maybe<User>,
+    Parent = {},
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context>;
   export type UserResolver<
     R = Maybe<User>,
     Parent = {},
-    Context = {}
+    Context = IGraphQLContext
   > = Resolver<R, Parent, Context, UserArgs>;
   export interface UserArgs {
     userId: string;
@@ -143,12 +146,12 @@ export namespace QueryResolvers {
   export type UsersResolver<
     R = Maybe<User[]>,
     Parent = {},
-    Context = {}
+    Context = IGraphQLContext
   > = Resolver<R, Parent, Context>;
 }
 
 export namespace UserResolvers {
-  export interface Resolvers<Context = {}, TypeParent = User> {
+  export interface Resolvers<Context = IGraphQLContext, TypeParent = User> {
     userId?: UserIdResolver<string, TypeParent, Context>;
 
     email?: EmailResolver<string, TypeParent, Context>;
@@ -161,31 +164,32 @@ export namespace UserResolvers {
   export type UserIdResolver<
     R = string,
     Parent = User,
-    Context = {}
+    Context = IGraphQLContext
   > = Resolver<R, Parent, Context>;
-  export type EmailResolver<R = string, Parent = User, Context = {}> = Resolver<
-    R,
-    Parent,
-    Context
-  >;
+  export type EmailResolver<
+    R = string,
+    Parent = User,
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context>;
   export type PasswordResolver<
     R = string,
     Parent = User,
-    Context = {}
+    Context = IGraphQLContext
   > = Resolver<R, Parent, Context>;
   export type IsVerifiedResolver<
     R = boolean,
     Parent = User,
-    Context = {}
+    Context = IGraphQLContext
   > = Resolver<R, Parent, Context>;
 }
 
 export namespace MutationResolvers {
-  export interface Resolvers<Context = {}, TypeParent = {}> {
+  export interface Resolvers<Context = IGraphQLContext, TypeParent = {}> {
+    /** Registration Resolvers */
     register?: RegisterResolver<Error, TypeParent, Context>;
 
     verify?: VerifyResolver<Error, TypeParent, Context>;
-
+    /** Login Resolvers */
     loginWithCredentials?: LoginWithCredentialsResolver<
       Error,
       TypeParent,
@@ -195,24 +199,22 @@ export namespace MutationResolvers {
     loginWithToken?: LoginWithTokenResolver<Error, TypeParent, Context>;
   }
 
-  export type RegisterResolver<R = Error, Parent = {}, Context = {}> = Resolver<
-    R,
-    Parent,
-    Context,
-    RegisterArgs
-  >;
+  export type RegisterResolver<
+    R = Error,
+    Parent = {},
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context, RegisterArgs>;
   export interface RegisterArgs {
     email: string;
 
     password: string;
   }
 
-  export type VerifyResolver<R = Error, Parent = {}, Context = {}> = Resolver<
-    R,
-    Parent,
-    Context,
-    VerifyArgs
-  >;
+  export type VerifyResolver<
+    R = Error,
+    Parent = {},
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context, VerifyArgs>;
   export interface VerifyArgs {
     token: string;
   }
@@ -220,7 +222,7 @@ export namespace MutationResolvers {
   export type LoginWithCredentialsResolver<
     R = Error,
     Parent = {},
-    Context = {}
+    Context = IGraphQLContext
   > = Resolver<R, Parent, Context, LoginWithCredentialsArgs>;
   export interface LoginWithCredentialsArgs {
     email: string;
@@ -231,7 +233,7 @@ export namespace MutationResolvers {
   export type LoginWithTokenResolver<
     R = Error,
     Parent = {},
-    Context = {}
+    Context = IGraphQLContext
   > = Resolver<R, Parent, Context, LoginWithTokenArgs>;
   export interface LoginWithTokenArgs {
     token: string;
@@ -242,7 +244,7 @@ export namespace MutationResolvers {
 export type SkipDirectiveResolver<Result> = DirectiveResolverFn<
   Result,
   SkipDirectiveArgs,
-  {}
+  IGraphQLContext
 >;
 export interface SkipDirectiveArgs {
   /** Skipped when true. */
@@ -253,7 +255,7 @@ export interface SkipDirectiveArgs {
 export type IncludeDirectiveResolver<Result> = DirectiveResolverFn<
   Result,
   IncludeDirectiveArgs,
-  {}
+  IGraphQLContext
 >;
 export interface IncludeDirectiveArgs {
   /** Included when true. */
@@ -264,7 +266,7 @@ export interface IncludeDirectiveArgs {
 export type DeprecatedDirectiveResolver<Result> = DirectiveResolverFn<
   Result,
   DeprecatedDirectiveArgs,
-  {}
+  IGraphQLContext
 >;
 export interface DeprecatedDirectiveArgs {
   /** Explains why this element was deprecated, usually also including a suggestion for how to access supported similar data. Formatted using the Markdown syntax (as specified by [CommonMark](https://commonmark.org/). */

@@ -154,7 +154,7 @@
         "fields": [
           {
             "name": "register",
-            "description": "",
+            "description": "Registration Resolvers",
             "args": [
               {
                 "name": "email",
@@ -222,7 +222,7 @@
           },
           {
             "name": "loginWithCredentials",
-            "description": "",
+            "description": "Login Resolvers",
             "args": [
               {
                 "name": "email",

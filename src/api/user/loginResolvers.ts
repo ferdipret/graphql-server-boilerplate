@@ -2,15 +2,15 @@ import * as bcrypt from 'bcrypt'
 import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 
+import { IGraphQLContext } from '../../context'
 import { IResolvers } from '../../generated/graphql'
 import { User } from '../../models/user'
 
-config()
-
 export const userLoginResolver: IResolvers = {
   Mutation: {
-    loginWithCredentials: async (_, args) => {
+    loginWithCredentials: async (_, args, context) => {
       const { email, password } = args
+      const { session } = context
 
       const user: User | undefined = await User.findOne({ email })
 
@@ -19,7 +19,7 @@ export const userLoginResolver: IResolvers = {
 
         return (
           isPasswordValid &&
-          jwt.sign({ id: user.id, email: user.email }, process.env.JWT_SECRET as string, {
+          jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, {
             expiresIn: '1y',
           })
         )
@@ -28,11 +28,12 @@ export const userLoginResolver: IResolvers = {
       return null
     },
 
-    loginWithToken: async (_, args) => {
+    loginWithToken: async (_, args, context) => {
       const { token } = args
+      const { session } = context
 
       try {
-        jwt.verify(token, process.env.JWT_SECRET as string)
+        jwt.verify(token, session.jwtSecret)
       } catch (error) {
         return error
       }
