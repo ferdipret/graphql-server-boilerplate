@@ -47,6 +47,8 @@ export interface Mutation {
   loginWithCredentials: Error;
 
   loginWithToken: Error;
+  /** Reset Password Resolvers */
+  resetPassword: Error;
 }
 
 // ====================================================
@@ -71,6 +73,9 @@ export interface LoginWithCredentialsMutationArgs {
 }
 export interface LoginWithTokenMutationArgs {
   token: string;
+}
+export interface ResetPasswordMutationArgs {
+  email: string;
 }
 
 import {
@@ -225,6 +230,8 @@ export namespace MutationResolvers {
     >;
 
     loginWithToken?: LoginWithTokenResolver<Error, TypeParent, Context>;
+    /** Reset Password Resolvers */
+    resetPassword?: ResetPasswordResolver<Error, TypeParent, Context>;
   }
 
   export type RegisterResolver<
@@ -265,6 +272,15 @@ export namespace MutationResolvers {
   > = Resolver<R, Parent, Context, LoginWithTokenArgs>;
   export interface LoginWithTokenArgs {
     token: string;
+  }
+
+  export type ResetPasswordResolver<
+    R = Error,
+    Parent = {},
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context, ResetPasswordArgs>;
+  export interface ResetPasswordArgs {
+    email: string;
   }
 }
 

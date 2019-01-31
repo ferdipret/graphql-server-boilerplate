@@ -3,10 +3,10 @@ import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
 import { getUserByEmail, User, UserRoleType, verifyUser } from '../../models/user'
+import { sendVerifyEmail } from '../../utils/email'
 import { formatYupError } from '../../utils/formatYupError'
-import { sendEmail } from '../../utils/sendEmail'
 import { DUPLICATE_EMAIL } from './constants'
-import { schema } from './schemaValidator'
+import { verifyRegistrationEmail } from './schemaValidator'
 
 const users: any = [
   {
@@ -35,7 +35,7 @@ export const userRegistrationResolver: IResolvers = {
     register: async (_, args, context) => {
       /** First we need to validate that the incoming arguements match the schema. */
       try {
-        await schema.validate(args, { abortEarly: false })
+        await verifyRegistrationEmail.validate(args, { abortEarly: false })
       } catch (error) {
         /** If the schema doesn't match, we'll use an early return statement. */
         return formatYupError(error)
@@ -82,7 +82,7 @@ export const userRegistrationResolver: IResolvers = {
       })
 
       /** Send verification email. */
-      sendEmail({
+      sendVerifyEmail({
         recipient: 'ferdinandpretorius@gmail.com',
         url: `http://localhost:7331/validate-email/${token}`,
       })

@@ -17,7 +17,7 @@ const registerPasswordValidation: yup.StringSchema = yup
   .min(MIN_EMAIL_STRING_LENGTH, PASSWORD_NOT_LONG_ENOUGH)
   .max(MAX_EMAIL_STRING_LENGTH)
 
-export const schema: yup.ObjectSchema<
+export const verifyRegistrationEmail: yup.ObjectSchema<
   yup.Shape<{}, { email: string; password: string }>
 > = yup.object().shape({
   email: registerEmailValidation,

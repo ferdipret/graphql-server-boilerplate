@@ -29,4 +29,7 @@ type Mutation {
   # Login Resolvers
   loginWithCredentials(email: String!, password: String!): Error!
   loginWithToken(token: String!): Error!
+
+  # Reset Password Resolvers
+  resetPassword(email: String!): Error!
 }

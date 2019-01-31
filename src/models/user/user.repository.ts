@@ -40,4 +40,18 @@ async function verifyUser(id: string) {
   return verifiedUser
 }
 
-export { getUserByEmail, getUserByToken, verifyUser }
+async function resetPassword(email: string) {
+  const userRepository: Repository<User> = getRepository(User)
+
+  try {
+    await userRepository.update({ email }, { hasRequestedPasswordReset: true })
+
+    const user: User | undefined = await userRepository.findOne({ email })
+
+    return user
+  } catch (error) {
+    return error
+  }
+}
+
+export { getUserByEmail, getUserByToken, verifyUser, resetPassword }
