@@ -54,4 +54,13 @@ async function resetPassword(email: string) {
   }
 }
 
-export { getUserByEmail, getUserByToken, verifyUser, resetPassword }
+async function updateUserPassword(email: string, password: string) {
+  const userRepository: Repository<User> = getRepository(User)
+  await userRepository.update({ email }, { password })
+
+  const user: User | undefined = await userRepository.findOne({ email })
+
+  return user
+}
+
+export { getUserByEmail, getUserByToken, verifyUser, resetPassword, updateUserPassword }

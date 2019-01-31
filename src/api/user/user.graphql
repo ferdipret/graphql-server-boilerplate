@@ -32,4 +32,5 @@ type Mutation {
 
   # Reset Password Resolvers
   resetPassword(email: String!): Error!
+  updatePassword(token: String!, password: String!): Error!
 }
