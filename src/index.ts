@@ -62,6 +62,8 @@ const connection: Promise<Connection> = (async () => {
         clientHost: 'http://localhost:7331',
       }
 
+      log(user)
+
       // Add the user to the context.
       return { user, session }
     },

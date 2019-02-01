@@ -3,6 +3,7 @@ import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
 import { getUserByEmail, User } from '../../models/user'
+import { login } from '../../models/user/user.repository'
 
 /**
  * In general, we'll be handling authorization the way apollo recommends. By checking the token in
@@ -16,7 +17,7 @@ import { getUserByEmail, User } from '../../models/user'
  * their credentials, the client should use the `loginWithCredentials` method, here we can refresh
  * the expiry date on the token, and send a fresh token.
  */
-export const userLoginResolver: IResolvers = {
+const userLoginResolver: IResolvers = {
   Mutation: {
     loginWithCredentials: async (_, args, context) => {
       const { email, password } = args
@@ -27,28 +28,42 @@ export const userLoginResolver: IResolvers = {
       if (user) {
         const isPasswordValid: boolean = await bcrypt.compare(password, user.password)
 
-        return (
-          isPasswordValid &&
-          jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, {
-            expiresIn: '1y',
-          })
-        )
+        if (!isPasswordValid) {
+          return 'invalid password'
+        }
+
+        login(user.id)
+
+        return jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, {
+          expiresIn: '1y',
+        })
       }
 
       return null
     },
 
     loginWithToken: async (_, args, context) => {
+      let tokenData: User | undefined
       const { token } = args
       const { session } = context
 
       try {
-        jwt.verify(token, session.jwtSecret)
+        tokenData = jwt.verify(token, session.jwtSecret) as User
       } catch (error) {
         return error
+      }
+
+      if (tokenData) {
+        const user: User | undefined = await getUserByEmail(tokenData.email)
+
+        if (user) {
+          await login(user.id)
+        }
       }
 
       return token
     },
   },
 }
+
+export { userLoginResolver }

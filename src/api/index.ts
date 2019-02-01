@@ -4,9 +4,15 @@ import { IResolvers } from 'graphql-tools'
 import { fileLoader, mergeResolvers, mergeTypes } from 'merge-graphql-schemas'
 import * as path from 'path'
 
+import { userLoginResolver } from './user/loginResolvers'
 import { userRegistrationResolver } from './user/registrationResolvers'
+import { userResetPasswordResolver } from './user/resetPasswordResolvers'
 
-const resolversArray: Array<string | any> = [userRegistrationResolver]
+const resolversArray: Array<string | any> = [
+  userLoginResolver,
+  userRegistrationResolver,
+  userResetPasswordResolver,
+]
 const resolvers: IResolvers<any, any> | undefined = mergeResolvers(resolversArray)
 
 const typesArray: string[] = fileLoader(path.join(__dirname, './**/*.graphql'), {

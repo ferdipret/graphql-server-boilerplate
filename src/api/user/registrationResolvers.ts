@@ -21,7 +21,7 @@ const users: any = [
   },
 ]
 
-export const userRegistrationResolver: IResolvers = {
+const userRegistrationResolver: IResolvers = {
   Query: {
     users: () => {
       return Object.values(users)
@@ -68,6 +68,7 @@ export const userRegistrationResolver: IResolvers = {
         password: await bcrypt.hash(password, saltRounds),
         isVerified: false,
         hasRequestedPasswordReset: false,
+        isLoggedIn: false,
         role: UserRoleType.User,
       })
 
@@ -123,3 +124,5 @@ export const userRegistrationResolver: IResolvers = {
     },
   },
 }
+
+export { userRegistrationResolver }

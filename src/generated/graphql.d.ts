@@ -36,6 +36,8 @@ export interface User {
   hasRequestedPasswordReset: boolean;
 
   role: UserRoleType[];
+
+  isLoggedIn: boolean;
 }
 
 export interface Mutation {
@@ -189,6 +191,8 @@ export namespace UserResolvers {
     >;
 
     role?: RoleResolver<UserRoleType[], TypeParent, Context>;
+
+    isLoggedIn?: IsLoggedInResolver<boolean, TypeParent, Context>;
   }
 
   export type UserIdResolver<
@@ -218,6 +222,11 @@ export namespace UserResolvers {
   > = Resolver<R, Parent, Context>;
   export type RoleResolver<
     R = UserRoleType[],
+    Parent = User,
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context>;
+  export type IsLoggedInResolver<
+    R = boolean,
     Parent = User,
     Context = IGraphQLContext
   > = Resolver<R, Parent, Context>;

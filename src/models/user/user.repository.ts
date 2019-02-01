@@ -32,9 +32,17 @@ async function getUserByToken(token: string) {
   return undefined
 }
 
+async function login(id: string) {
+  const userRepository: Repository<User> = getRepository(User)
+  await userRepository.update({ id }, { isLoggedIn: true })
+  const loggedInUser: User | undefined = await userRepository.findOne({ id })
+
+  return loggedInUser
+}
+
 async function verifyUser(id: string) {
   const userRepository: Repository<User> = getRepository(User)
-  await userRepository.update({ id }, { isVerified: true })
+  await userRepository.update({ id }, { isVerified: true, isLoggedIn: true })
   const verifiedUser: User | undefined = await userRepository.findOne({ id })
 
   return verifiedUser
@@ -63,4 +71,4 @@ async function updateUserPassword(email: string, password: string) {
   return user
 }
 
-export { getUserByEmail, getUserByToken, verifyUser, resetPassword, updateUserPassword }
+export { getUserByEmail, getUserByToken, login, verifyUser, resetPassword, updateUserPassword }

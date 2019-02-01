@@ -5,7 +5,7 @@ import { User } from '../../models/user'
 import { resetPassword, updateUserPassword } from '../../models/user/user.repository'
 import { sendResetPasswordEmail } from '../../utils/email'
 
-const resetPasswordResolver: IResolvers = {
+const userResetPasswordResolver: IResolvers = {
   Mutation: {
     resetPassword: async (_, args, context) => {
       const { email } = args
@@ -56,4 +56,4 @@ const resetPasswordResolver: IResolvers = {
   },
 }
 
-export { resetPasswordResolver }
+export { userResetPasswordResolver }
