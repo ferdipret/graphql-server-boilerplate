@@ -6,7 +6,7 @@ import { log } from './logger'
 config()
 
 const client: any = new SparkPost(process.env.SPARKPOST_API_KEY, {
-  origin: 'https://api.eu.sparkpost.com:443',
+  origin: process.env.SPARKPOST_ORIGIN
 })
 
 const sendVerifyEmail: any = async ({ recipient, url }: any) => {
@@ -14,19 +14,19 @@ const sendVerifyEmail: any = async ({ recipient, url }: any) => {
   const response: any = await client.transmissions
     .send({
       options: {
-        sandbox: true,
+        sandbox: true
       },
       content: {
-        from: 'testing@sparkpostbox.com',
+        from: process.env.SPARKPOST_FROM_EMAIL,
         subject: 'Confirm Email',
         html: `<html>
         <body>
         <p>Thanks for signing up, please click the link to verify your email!</p>
         <a href="${url}">confirm email</a>
         </body>
-        </html>`,
+        </html>`
       },
-      recipients: [{ address: recipient }],
+      recipients: [{ address: recipient }]
     })
     .then((data: any) => {
       log(data)
@@ -42,10 +42,10 @@ const sendResetPasswordEmail: any = async ({ recipient, url }: any) => {
   const response: any = await client.transmissions
     .send({
       options: {
-        sandbox: true,
+        sandbox: true
       },
       content: {
-        from: 'testing@sparkpostbox.com',
+        from: process.env.SPARKPOST_FROM_EMAIL,
         subject: 'Reset Password',
         html: `<html>
         <body>
@@ -55,9 +55,9 @@ const sendResetPasswordEmail: any = async ({ recipient, url }: any) => {
         </p>
         <a href="${url}">Reset Password</a>
         </body>
-        </html>`,
+        </html>`
       },
-      recipients: [{ address: recipient }],
+      recipients: [{ address: recipient }]
     })
     .then((data: any) => {
       log(data)
