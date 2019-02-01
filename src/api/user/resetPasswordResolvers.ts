@@ -18,23 +18,23 @@ const resetPasswordResolver: IResolvers = {
         const token: string = jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, {
           expiresIn: '7d',
         })
+
         /** Send reset password email. */
         sendResetPasswordEmail({
-          recipient: 'ferdinandpretorius@gmail.com',
-          url: `http://localhost:7331/reset-password/${token}`,
+          recipient: user.email,
+          url: `${session.clientHost}/reset-password/${token}`,
         })
       }
     },
 
     updatePassword: async (_, args, context) => {
-      let validToken: string | { [key: string]: any } | null
+      let validToken: string | User
       const { token, password } = args
       const { session } = context
 
       /** Check the token is valid */
       try {
-        await jwt.verify(token, session.jwtSecret)
-        validToken = jwt.decode(token) as object
+        validToken = (await jwt.verify(token, session.jwtSecret)) as User
       } catch (error) {
         return error
       }

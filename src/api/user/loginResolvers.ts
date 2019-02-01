@@ -2,7 +2,7 @@ import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
-import { User } from '../../models/user'
+import { getUserByEmail, User } from '../../models/user'
 
 /**
  * In general, we'll be handling authorization the way apollo recommends. By checking the token in
@@ -22,7 +22,7 @@ export const userLoginResolver: IResolvers = {
       const { email, password } = args
       const { session } = context
 
-      const user: User | undefined = await User.findOne({ email })
+      const user: User | undefined = await getUserByEmail(email)
 
       if (user) {
         const isPasswordValid: boolean = await bcrypt.compare(password, user.password)

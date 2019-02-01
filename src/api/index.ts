@@ -3,6 +3,7 @@ import { DocumentNode } from 'graphql'
 import { IResolvers } from 'graphql-tools'
 import { fileLoader, mergeResolvers, mergeTypes } from 'merge-graphql-schemas'
 import * as path from 'path'
+
 import { userRegistrationResolver } from './user/registrationResolvers'
 
 const resolversArray: Array<string | any> = [userRegistrationResolver]

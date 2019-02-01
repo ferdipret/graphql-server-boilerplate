@@ -1,15 +1,16 @@
-import 'reflect-metadata'
+import "reflect-metadata"
 
-import { ApolloServer } from 'apollo-server-express'
-import chalk from 'chalk'
-import * as cors from 'cors'
-import { config } from 'dotenv'
-import * as express from 'express'
-import { Connection, ConnectionOptions, createConnection, getConnectionOptions } from 'typeorm'
+import { ApolloServer } from "apollo-server-express"
+import chalk from "chalk"
+import * as cors from "cors"
+import { config } from "dotenv"
+import * as express from "express"
+import { Connection, ConnectionOptions, createConnection, getConnectionOptions } from "typeorm"
 
-import { resolvers, typeDefs } from './api'
-import { getUserByToken, User } from './models/user'
-import { log } from './utils/logger'
+import { resolvers, typeDefs } from "./api"
+import { IGraphQLSession } from "./context"
+import { getUserByToken, User } from "./models/user"
+import { log } from "./utils/logger"
 
 config()
 
@@ -30,7 +31,7 @@ const connection: Promise<Connection> = (async () => {
    */
   const connectionInitializer: Connection = await createConnection({
     ...connectionOptions,
-    name: 'default',
+    name: "default"
   })
 
   /**
@@ -47,26 +48,27 @@ const connection: Promise<Connection> = (async () => {
     resolvers,
     context: async ({ req }: any) => {
       // Get the user token from the headers.
-      const token: string = req.headers.authorization || ''
+      const token: string = req.headers.authorization || ""
 
       // Try to retrieve a user with the token.
       const user: User | undefined = await getUserByToken(token)
 
       if (!user) {
-        throw new Error('You must be logged in!')
+        throw new Error("You must be logged in!")
       }
 
-      const session: any = {
-        jwtSecret: process.env.JWT_SECRET,
+      const session: IGraphQLSession = {
+        jwtSecret: process.env.JWT_SECRET as string,
+        clientHost: "http://localhost:7331"
       }
 
       // Add the user to the context.
       return { user, session }
-    },
+    }
   })
 
   /** Apply the express as middleware to the graphql server. */
-  server.applyMiddleware({ app, path: '/api' })
+  server.applyMiddleware({ app, path: "/api" })
 
   /** Start up the server. */
   app.listen({ port: PORT }, () => {
@@ -74,9 +76,9 @@ const connection: Promise<Connection> = (async () => {
       chalk.bold.green(
         `
 Server is running on localhost:${chalk.underline.yellow(PORT_PRINTER)}
-${chalk.dim.blue('GraphQL Playground route is `/api`')}
-      `,
-      ),
+${chalk.dim.blue("GraphQL Playground route is `/api`")}
+      `
+      )
     )
   })
 

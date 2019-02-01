@@ -60,7 +60,7 @@ export const userRegistrationResolver: IResolvers = {
 
       /**
        * If we reach this point, we have a valid schema and the user doesn't yet exist.
-       * Therefor we can go ahead and create the user.
+       * Therefore we can go ahead and create the user.
        */
       const saltRounds: number = 16
       const user: User = User.create({
@@ -83,8 +83,8 @@ export const userRegistrationResolver: IResolvers = {
 
       /** Send verification email. */
       sendVerifyEmail({
-        recipient: 'ferdinandpretorius@gmail.com',
-        url: `http://localhost:7331/validate-email/${token}`,
+        recipient: user.email,
+        url: `${session.clientHost}/validate-email/${token}`,
       })
 
       return token
@@ -92,31 +92,27 @@ export const userRegistrationResolver: IResolvers = {
 
     verify: async (_, args, context) => {
       /** If a valid token is returned we need to store it so we can decode the token. */
-      let validToken: string | object
-      let tokenData: string | { [key: string]: any } | null
+      let validToken: User | string
       const { token } = args
       const { session } = context
 
       try {
         /** Verify that the token is indeed valid. */
-        validToken = jwt.verify(token, session.jwtSecret)
+        validToken = jwt.verify(token, session.jwtSecret) as User
       } catch (error) {
         return error
       }
 
       if (validToken) {
-        /** Decode and return the token data. */
-        tokenData = jwt.decode(token) as object
-
-        const user: User | undefined = await getUserByEmail(tokenData.email)
+        const user: User | undefined = await getUserByEmail(validToken.email)
 
         if (user) {
-          const userVerified: User | undefined = await verifyUser(user.id)
+          const verifiedUser: User | undefined = await verifyUser(user.id)
 
           /** Before returning the new token, let's make sure our user is not undefined */
           return (
-            userVerified &&
-            jwt.sign({ id: userVerified.id, email: userVerified.email }, session.jwtSecret, {
+            verifiedUser &&
+            jwt.sign({ id: verifiedUser.id, email: verifiedUser.email }, session.jwtSecret, {
               expiresIn: '1y',
             })
           )
