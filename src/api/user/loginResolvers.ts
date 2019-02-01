@@ -32,7 +32,7 @@ const userLoginResolver: IResolvers = {
           return 'invalid password'
         }
 
-        login(user.id)
+        await login(user.id)
 
         return jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, {
           expiresIn: '1y',

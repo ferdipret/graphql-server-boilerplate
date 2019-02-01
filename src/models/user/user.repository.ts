@@ -40,6 +40,14 @@ async function login(id: string) {
   return loggedInUser
 }
 
+async function logout(id: string) {
+  const userRepository: Repository<User> = getRepository(User)
+  await userRepository.update({ id }, { isLoggedIn: false })
+  const loggedInUser: User | undefined = await userRepository.findOne({ id })
+
+  return loggedInUser
+}
+
 async function verifyUser(id: string) {
   const userRepository: Repository<User> = getRepository(User)
   await userRepository.update({ id }, { isVerified: true, isLoggedIn: true })
@@ -71,4 +79,12 @@ async function updateUserPassword(email: string, password: string) {
   return user
 }
 
-export { getUserByEmail, getUserByToken, login, verifyUser, resetPassword, updateUserPassword }
+export {
+  getUserByEmail,
+  getUserByToken,
+  login,
+  logout,
+  verifyUser,
+  resetPassword,
+  updateUserPassword,
+}

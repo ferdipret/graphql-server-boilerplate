@@ -31,6 +31,9 @@ type Mutation {
   loginWithCredentials(email: String!, password: String!): Error!
   loginWithToken(token: String!): Error!
 
+  # Logout Resolvers
+  logout(token: String!): Error!
+
   # Reset Password Resolvers
   resetPassword(email: String!): Error!
   updatePassword(token: String!, password: String!): Error!

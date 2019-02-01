@@ -53,7 +53,7 @@ const connection: Promise<Connection> = (async () => {
       // Try to retrieve a user with the token.
       const user: User | undefined = await getUserByToken(token)
 
-      if (!user) {
+      if (!user || !user.isLoggedIn) {
         throw new Error('You must be logged in!')
       }
 
@@ -61,8 +61,6 @@ const connection: Promise<Connection> = (async () => {
         jwtSecret: process.env.JWT_SECRET as string,
         clientHost: 'http://localhost:7331',
       }
-
-      log(user)
 
       // Add the user to the context.
       return { user, session }
