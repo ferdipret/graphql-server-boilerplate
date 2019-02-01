@@ -2,7 +2,6 @@
   "defaultSeverity": "warning",
   "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
   "rules": {
-    /* General TypeScript rules */
     "semicolon": [true, "never"],
     "trailing-comma": [true, { "multiline": "always", "singleline": "never" }],
     "no-magic-numbers": true,
@@ -34,7 +33,6 @@
       "allow-pascal-case"
     ],
 
-    /* React specific rules */
     "jsx-alignment": true,
     "jsx-curly-spacing": "never",
     "jsx-equals-spacing": "never",
