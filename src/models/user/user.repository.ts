@@ -14,17 +14,16 @@ async function getUserByEmail(email: string) {
 }
 
 async function getUserByToken(token: string) {
-  let validToken: string | object
+  let validToken: User
 
   try {
-    validToken = await jwt.verify(token, process.env.JWT_SECRET as string)
+    validToken = (await jwt.verify(token, process.env.JWT_SECRET as string)) as User
   } catch (error) {
     return error
   }
 
   if (validToken) {
-    const tokenData: string | { [key: string]: any } | null = jwt.decode(token) as object
-    const user: User | undefined = await getUserByEmail(tokenData.email)
+    const user: User | undefined = await getUserByEmail(validToken.email)
 
     return user
   }
@@ -35,25 +34,25 @@ async function getUserByToken(token: string) {
 async function login(id: string) {
   const userRepository: Repository<User> = getRepository(User)
   await userRepository.update({ id }, { isLoggedIn: true })
-  const loggedInUser: User | undefined = await userRepository.findOne({ id })
+  const user: User | undefined = await userRepository.findOne({ id })
 
-  return loggedInUser
+  return user
 }
 
 async function logout(id: string) {
   const userRepository: Repository<User> = getRepository(User)
   await userRepository.update({ id }, { isLoggedIn: false })
-  const loggedInUser: User | undefined = await userRepository.findOne({ id })
+  const user: User | undefined = await userRepository.findOne({ id })
 
-  return loggedInUser
+  return user
 }
 
 async function verifyUser(id: string) {
   const userRepository: Repository<User> = getRepository(User)
   await userRepository.update({ id }, { isVerified: true, isLoggedIn: true })
-  const verifiedUser: User | undefined = await userRepository.findOne({ id })
+  const user: User | undefined = await userRepository.findOne({ id })
 
-  return verifiedUser
+  return user
 }
 
 async function resetPassword(email: string) {

@@ -6,21 +6,21 @@ import * as path from 'path'
 
 import {
   userLoginResolver,
+  userLogoutResolver,
   userRegistrationResolver,
   userResetPasswordResolver,
-  userLogoutResolver
 } from './user'
 
 const resolversArray: Array<string | any> = [
   userLoginResolver,
   userRegistrationResolver,
   userResetPasswordResolver,
-  userLogoutResolver
+  userLogoutResolver,
 ]
 const resolvers: IResolvers<any, any> | undefined = mergeResolvers(resolversArray)
 
 const typesArray: string[] = fileLoader(path.join(__dirname, './**/*.graphql'), {
-  recursive: true
+  recursive: true,
 })
 
 const mergedTypes: string = mergeTypes(typesArray, { all: true })
