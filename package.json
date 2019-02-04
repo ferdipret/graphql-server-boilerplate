@@ -1,7 +1,7 @@
 {
-  "name": "mapr-server",
+  "name": "graphql-server-boilerplate",
   "version": "0.0.1",
-  "description": "A platform to track software development features",
+  "description": "A typescript implementation of apollo-server-express and typeorm",
   "devDependencies": {
     "@types/chalk": "^2.2.0",
     "@types/dotenv": "^6.1.0",
