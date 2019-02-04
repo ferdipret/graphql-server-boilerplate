@@ -3,7 +3,8 @@ import * as jwt from 'jsonwebtoken'
 import { IResolvers } from '../../generated/graphql'
 import { User } from '../../models/user'
 import { resetPassword, updateUserPassword } from '../../models/user/user.repository'
-import { sendResetPasswordEmail } from '../../utils/email'
+import { sendMail } from '../../utils/email'
+import { emailBodies } from '../../utils/emailContent'
 
 const userResetPasswordResolver: IResolvers = {
   Mutation: {
@@ -20,9 +21,12 @@ const userResetPasswordResolver: IResolvers = {
         })
 
         /** Send reset password email. */
-        sendResetPasswordEmail({
+        sendMail({
           recipient: user.email,
-          url: `${session.clientHost}/reset-password/${token}`,
+          content: emailBodies.sendResetPasswordEmail(
+            `${session.clientHost}/reset-password/${token}`,
+          ),
+          subject: 'Reset password',
         })
       }
     },

@@ -6,27 +6,21 @@ import { log } from './logger'
 config()
 
 const client: any = new SparkPost(process.env.SPARKPOST_API_KEY, {
-  origin: process.env.SPARKPOST_ORIGIN
+  origin: process.env.SPARKPOST_ORIGIN,
 })
 
-const sendVerifyEmail: any = async ({ recipient, url }: any) => {
-  log(url)
+const sendMail: any = async ({ recipient, content, subject }: any) => {
   const response: any = await client.transmissions
     .send({
       options: {
-        sandbox: true
+        sandbox: true,
       },
       content: {
         from: process.env.SPARKPOST_FROM_EMAIL,
-        subject: 'Confirm Email',
-        html: `<html>
-        <body>
-        <p>Thanks for signing up, please click the link to verify your email!</p>
-        <a href="${url}">confirm email</a>
-        </body>
-        </html>`
+        subject,
+        html: content,
       },
-      recipients: [{ address: recipient }]
+      recipients: [{ address: recipient }],
     })
     .then((data: any) => {
       log(data)
@@ -37,35 +31,4 @@ const sendVerifyEmail: any = async ({ recipient, url }: any) => {
   log(response)
 }
 
-const sendResetPasswordEmail: any = async ({ recipient, url }: any) => {
-  log(url)
-  const response: any = await client.transmissions
-    .send({
-      options: {
-        sandbox: true
-      },
-      content: {
-        from: process.env.SPARKPOST_FROM_EMAIL,
-        subject: 'Reset Password',
-        html: `<html>
-        <body>
-        <p>
-          You've recently requested a password reset,
-          please follow the link to complete the process!
-        </p>
-        <a href="${url}">Reset Password</a>
-        </body>
-        </html>`
-      },
-      recipients: [{ address: recipient }]
-    })
-    .then((data: any) => {
-      log(data)
-    })
-    .catch((err: any) => {
-      log(err)
-    })
-  log(response)
-}
-
-export { sendVerifyEmail, sendResetPasswordEmail }
+export { sendMail }

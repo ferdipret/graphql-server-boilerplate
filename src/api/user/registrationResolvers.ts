@@ -3,7 +3,8 @@ import * as jwt from 'jsonwebtoken'
 
 import { IResolvers } from '../../generated/graphql'
 import { getUserByEmail, User, UserRoleType, verifyUser } from '../../models/user'
-import { sendVerifyEmail } from '../../utils/email'
+import { sendMail } from '../../utils/email'
+import { emailBodies } from '../../utils/emailContent'
 import { formatYupError } from '../../utils/formatYupError'
 import { DUPLICATE_EMAIL } from './constants'
 import { verifyRegistrationEmail } from './schemaValidator'
@@ -83,9 +84,10 @@ const userRegistrationResolver: IResolvers = {
       })
 
       /** Send verification email. */
-      sendVerifyEmail({
+      sendMail({
         recipient: user.email,
-        url: `${session.clientHost}/validate-email/${token}`,
+        content: emailBodies.sendVerifyEmail(`${session.clientHost}/validate-email/${token}`),
+        subject: 'Confirm Email',
       })
 
       return token
