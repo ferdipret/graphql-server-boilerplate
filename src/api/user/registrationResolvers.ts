@@ -107,17 +107,15 @@ const userRegistrationResolver: IResolvers = {
       }
 
       if (validToken) {
-        const user: User | undefined = await getUserByEmail(validToken.email)
+        const validUser: User | undefined = await getUserByEmail(validToken.email)
 
-        if (user) {
-          const verifiedUser: User | undefined = await verifyUser(user.id)
+        if (validUser) {
+          const user: User | undefined = await verifyUser(validUser.id)
 
           /** Before returning the new token, let's make sure our user is not undefined */
           return (
-            verifiedUser &&
-            jwt.sign({ id: verifiedUser.id, email: verifiedUser.email }, session.jwtSecret, {
-              expiresIn: '1y',
-            })
+            user &&
+            jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, { expiresIn: '1y' })
           )
         }
       }
