@@ -40,35 +40,37 @@ const connection: Promise<Connection> = (async () => {
    */
   const app: express.Application = express()
 
-  app.use(cors())
+  const corsOptions: any = { credentials: true, origin: 'http://localhost:7331' }
+
+  app.use(cors(corsOptions))
 
   /** Instantiate the ApolloServer. */
   const server: ApolloServer = new ApolloServer({
     typeDefs,
     resolvers,
-    context: async ({ req }: any) => {
-      // Get the user token from the headers.
-      const token: string = req.headers.authorization || ''
+    // context: async ({ req }: any) => {
+    //   // Get the user token from the headers.
+    //   const token: string = req.headers.authorization || ''
 
-      // Try to retrieve a user with the token.
-      const user: User | undefined = await getUserByToken(token)
+    //   // Try to retrieve a user with the token.
+    //   const user: User | undefined = await getUserByToken(token)
 
-      if (!user || !user.isLoggedIn) {
-        throw new Error('You must be logged in!')
-      }
+    //   if (!user || !user.isLoggedIn) {
+    //     throw new Error('You must be logged in!')
+    //   }
 
-      const session: IGraphQLSession = {
-        jwtSecret: process.env.JWT_SECRET as string,
-        clientHost: 'http://localhost:7331',
-      }
+    //   const session: IGraphQLSession = {
+    //     jwtSecret: process.env.JWT_SECRET as string,
+    //     clientHost: 'http://localhost:7331',
+    //   }
 
-      // Add the user to the context.
-      return { user, session }
-    },
+    //   // Add the user to the context.
+    //   return { user, session }
+    // },
   })
 
   /** Apply the express as middleware to the graphql server. */
-  server.applyMiddleware({ app, path: '/api' })
+  server.applyMiddleware({ app, path: '/api', cors: false })
 
   /** Start up the server. */
   app.listen({ port: PORT }, () => {
