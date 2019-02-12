@@ -48,25 +48,28 @@ const connection: Promise<Connection> = (async () => {
   const server: ApolloServer = new ApolloServer({
     typeDefs,
     resolvers,
-    // context: async ({ req }: any) => {
-    //   // Get the user token from the headers.
-    //   const token: string = req.headers.authorization || ''
+    context: async ({ req }: any) => {
+      const session: IGraphQLSession = {
+        jwtSecret: process.env.JWT_SECRET as string,
+        clientHost: 'http://localhost:7331',
+      }
 
-    //   // Try to retrieve a user with the token.
-    //   const user: User | undefined = await getUserByToken(token)
+      if (req.body.operationName === 'Register') {
+        return { session, user: null }
+      }
+      // Get the user token from the headers.
+      const token: string = req.headers.authorization || ''
 
-    //   if (!user || !user.isLoggedIn) {
-    //     throw new Error('You must be logged in!')
-    //   }
+      // Try to retrieve a user with the token.
+      const user: User | undefined = await getUserByToken(token)
 
-    //   const session: IGraphQLSession = {
-    //     jwtSecret: process.env.JWT_SECRET as string,
-    //     clientHost: 'http://localhost:7331',
-    //   }
+      if (!user || !user.isLoggedIn) {
+        throw new Error('You must be logged in!')
+      }
 
-    //   // Add the user to the context.
-    //   return { user, session }
-    // },
+      // Add the user to the context.
+      return { user, session }
+    },
   })
 
   /** Apply the express as middleware to the graphql server. */
@@ -79,7 +82,7 @@ const connection: Promise<Connection> = (async () => {
         `
 Server is running on localhost:${chalk.underline.yellow(PORT_PRINTER)}
 ${chalk.dim.blue('GraphQL Playground route is `/api`')}
-      `,
+        `,
       ),
     )
   })
