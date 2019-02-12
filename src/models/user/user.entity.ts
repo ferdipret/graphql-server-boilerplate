@@ -23,9 +23,6 @@ export class User extends BaseEntity {
   @Column('boolean')
   public hasRequestedPasswordReset: boolean
 
-  @Column('boolean')
-  public isLoggedIn: boolean
-
   @Column({
     type: 'enum',
     enum: ['admin', 'user', 'ghost'],

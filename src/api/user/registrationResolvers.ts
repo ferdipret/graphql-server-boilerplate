@@ -69,7 +69,6 @@ const userRegistrationResolver: IResolvers = {
         password: await bcrypt.hash(password, saltRounds),
         isVerified: false,
         hasRequestedPasswordReset: false,
-        isLoggedIn: false,
         role: UserRoleType.User,
       })
 
