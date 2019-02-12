@@ -28,7 +28,11 @@ const userResetPasswordResolver: IResolvers = {
           ),
           subject: 'Reset password',
         })
+
+        return true
       }
+
+      return false
     },
 
     updatePassword: async (_, args, context) => {

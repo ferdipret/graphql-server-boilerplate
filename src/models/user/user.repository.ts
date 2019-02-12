@@ -33,7 +33,6 @@ async function getUserByToken(token: string) {
 
 async function login(id: string) {
   const userRepository: Repository<User> = getRepository(User)
-  await userRepository.update({ id }, { isLoggedIn: true })
   const user: User | undefined = await userRepository.findOne({ id })
 
   return user
@@ -41,7 +40,6 @@ async function login(id: string) {
 
 async function logout(id: string) {
   const userRepository: Repository<User> = getRepository(User)
-  await userRepository.update({ id }, { isLoggedIn: false })
   const user: User | undefined = await userRepository.findOne({ id })
 
   return user
@@ -49,7 +47,7 @@ async function logout(id: string) {
 
 async function verifyUser(id: string) {
   const userRepository: Repository<User> = getRepository(User)
-  await userRepository.update({ id }, { isVerified: true, isLoggedIn: true })
+  await userRepository.update({ id }, { isVerified: true })
   const user: User | undefined = await userRepository.findOne({ id })
 
   return user

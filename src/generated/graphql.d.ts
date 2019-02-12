@@ -40,19 +40,19 @@ export interface User {
 
 export interface Mutation {
   /** Registration Resolvers */
-  register: Error
+  register: string
 
-  verify: Error
+  verify: string
   /** Login Resolvers */
-  loginWithCredentials: Error
+  loginWithCredentials: string
 
-  loginWithToken: Error
+  loginWithToken: string
   /** Logout Resolvers */
-  logout: Error
+  logout: boolean
   /** Reset Password Resolvers */
-  resetPassword: Error
+  resetPassword: boolean
 
-  updatePassword: Error
+  updatePassword: string
 }
 
 // ====================================================
@@ -217,22 +217,22 @@ export namespace UserResolvers {
 export namespace MutationResolvers {
   export interface Resolvers<Context = IGraphQLContext, TypeParent = {}> {
     /** Registration Resolvers */
-    register?: RegisterResolver<Error, TypeParent, Context>
+    register?: RegisterResolver<string, TypeParent, Context>
 
-    verify?: VerifyResolver<Error, TypeParent, Context>
+    verify?: VerifyResolver<string, TypeParent, Context>
     /** Login Resolvers */
-    loginWithCredentials?: LoginWithCredentialsResolver<Error, TypeParent, Context>
+    loginWithCredentials?: LoginWithCredentialsResolver<string, TypeParent, Context>
 
-    loginWithToken?: LoginWithTokenResolver<Error, TypeParent, Context>
+    loginWithToken?: LoginWithTokenResolver<string, TypeParent, Context>
     /** Logout Resolvers */
-    logout?: LogoutResolver<Error, TypeParent, Context>
+    logout?: LogoutResolver<boolean, TypeParent, Context>
     /** Reset Password Resolvers */
-    resetPassword?: ResetPasswordResolver<Error, TypeParent, Context>
+    resetPassword?: ResetPasswordResolver<boolean, TypeParent, Context>
 
-    updatePassword?: UpdatePasswordResolver<Error, TypeParent, Context>
+    updatePassword?: UpdatePasswordResolver<string, TypeParent, Context>
   }
 
-  export type RegisterResolver<R = Error, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type RegisterResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,
@@ -244,7 +244,7 @@ export namespace MutationResolvers {
     password: string
   }
 
-  export type VerifyResolver<R = Error, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type VerifyResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,
@@ -255,7 +255,7 @@ export namespace MutationResolvers {
   }
 
   export type LoginWithCredentialsResolver<
-    R = Error,
+    R = string,
     Parent = {},
     Context = IGraphQLContext
   > = Resolver<R, Parent, Context, LoginWithCredentialsArgs>
@@ -265,7 +265,7 @@ export namespace MutationResolvers {
     password: string
   }
 
-  export type LoginWithTokenResolver<R = Error, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type LoginWithTokenResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,
@@ -275,7 +275,7 @@ export namespace MutationResolvers {
     token: string
   }
 
-  export type LogoutResolver<R = Error, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type LogoutResolver<R = boolean, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,
@@ -285,7 +285,7 @@ export namespace MutationResolvers {
     token: string
   }
 
-  export type ResetPasswordResolver<R = Error, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type ResetPasswordResolver<R = boolean, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,
@@ -295,7 +295,7 @@ export namespace MutationResolvers {
     email: string
   }
 
-  export type UpdatePasswordResolver<R = Error, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type UpdatePasswordResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,

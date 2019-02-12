@@ -23,17 +23,17 @@ type Query {
 
 type Mutation {
   # Registration Resolvers
-  register(email: String!, password: String!): Error!
-  verify(token: String!): Error!
+  register(email: String!, password: String!): String!
+  verify(token: String!): String!
 
   # Login Resolvers
-  loginWithCredentials(email: String!, password: String!): Error!
-  loginWithToken(token: String!): Error!
+  loginWithCredentials(email: String!, password: String!): String!
+  loginWithToken(token: String!): String!
 
   # Logout Resolvers
-  logout(token: String!): Error!
+  logout(token: String!): Boolean!
 
   # Reset Password Resolvers
-  resetPassword(email: String!): Error!
-  updatePassword(token: String!, password: String!): Error!
+  resetPassword(email: String!): Boolean!
+  updatePassword(token: String!, password: String!): String!
 }
