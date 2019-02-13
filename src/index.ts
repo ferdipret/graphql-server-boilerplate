@@ -63,7 +63,7 @@ const connection: Promise<Connection> = (async () => {
       // Try to retrieve a user with the token.
       const user: User | undefined = await getUserByToken(token)
 
-      if (!user || !user.isLoggedIn) {
+      if (!user) {
         throw new Error('You must be logged in!')
       }
 
