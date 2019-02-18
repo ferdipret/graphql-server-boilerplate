@@ -1,12 +1,12 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
-import { IResolvers, JwtToken } from '../../generated/graphql'
+import { IResolvers } from '../../generated/graphql'
 import { getUserByEmail, User, UserRoleType, verifyUser } from '../../models/user'
 import { sendMail } from '../../utils/email'
 import { emailBodies } from '../../utils/emailContent'
 import { formatYupError } from '../../utils/formatYupError'
-import { DUPLICATE_EMAIL } from './constants'
+import { DuplicateEmailError, TokenError } from './errors'
 import { verifyRegistrationEmail } from './schemaValidator'
 
 const users: any = [
@@ -51,12 +51,7 @@ const userRegistrationResolver: IResolvers = {
 
       /** If the user already exists, we'll use another early return statement. */
       if (userAlreadyExists) {
-        throw [
-          {
-            path: 'email',
-            message: DUPLICATE_EMAIL,
-          },
-        ]
+        throw DuplicateEmailError
       }
 
       /**
@@ -104,24 +99,22 @@ const userRegistrationResolver: IResolvers = {
         /** Verify that the token is indeed valid. */
         validToken = jwt.verify(token, session.jwtSecret) as User
       } catch (error) {
-        return error
+        throw TokenError
       }
 
-      if (validToken) {
+      try {
+        /** Get user based on token email */
         const validUser: User | undefined = await getUserByEmail(validToken.email)
+        const user: User | undefined = await verifyUser(validUser.id)
 
-        if (validUser) {
-          const user: User | undefined = await verifyUser(validUser.id)
-
-          /** Before returning the new token, let's make sure our user is not undefined */
-          return (
-            user &&
-            jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, { expiresIn: '1y' })
-          )
-        }
+        /** Before returning the new token, let's make sure our user is not undefined */
+        return (
+          user &&
+          jwt.sign({ id: user.id, email: user.email }, session.jwtSecret, { expiresIn: '1y' })
+        )
+      } catch (error) {
+        throw error
       }
-
-      return null
     },
   },
 }

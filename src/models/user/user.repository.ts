@@ -2,6 +2,7 @@ import { config } from 'dotenv'
 import * as jwt from 'jsonwebtoken'
 import { getRepository, Repository } from 'typeorm'
 
+import { UserEmailNotFound, UserIDNotFound } from './errors'
 import { User } from './user.entity'
 
 config()
@@ -9,6 +10,10 @@ config()
 async function getUserByEmail(email: string) {
   const userRepository: Repository<User> = getRepository(User)
   const user: User | undefined = await userRepository.findOne({ email })
+
+  if (!user) {
+    throw UserEmailNotFound
+  }
 
   return user
 }
@@ -49,6 +54,10 @@ async function verifyUser(id: string) {
   const userRepository: Repository<User> = getRepository(User)
   await userRepository.update({ id }, { isVerified: true })
   const user: User | undefined = await userRepository.findOne({ id })
+
+  if (!user) {
+    throw UserIDNotFound
+  }
 
   return user
 }
