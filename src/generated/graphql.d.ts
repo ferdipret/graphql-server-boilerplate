@@ -6,6 +6,8 @@ export enum UserRoleType {
   Ghost = 'ghost'
 }
 
+export type JwtToken = any
+
 export type Error = any
 
 // ====================================================
@@ -40,19 +42,19 @@ export interface User {
 
 export interface Mutation {
   /** Registration Resolvers */
-  register: string
+  register: JwtToken
 
-  verify: string
+  verify: JwtToken
   /** Login Resolvers */
-  loginWithCredentials: string
+  loginWithCredentials?: Maybe<JwtToken>
 
-  loginWithToken: string
+  loginWithToken: JwtToken
   /** Logout Resolvers */
   logout: boolean
   /** Reset Password Resolvers */
   resetPassword: boolean
 
-  updatePassword: string
+  updatePassword: JwtToken
 }
 
 // ====================================================
@@ -217,22 +219,22 @@ export namespace UserResolvers {
 export namespace MutationResolvers {
   export interface Resolvers<Context = IGraphQLContext, TypeParent = {}> {
     /** Registration Resolvers */
-    register?: RegisterResolver<string, TypeParent, Context>
+    register?: RegisterResolver<JwtToken, TypeParent, Context>
 
-    verify?: VerifyResolver<string, TypeParent, Context>
+    verify?: VerifyResolver<JwtToken, TypeParent, Context>
     /** Login Resolvers */
-    loginWithCredentials?: LoginWithCredentialsResolver<string, TypeParent, Context>
+    loginWithCredentials?: LoginWithCredentialsResolver<Maybe<JwtToken>, TypeParent, Context>
 
-    loginWithToken?: LoginWithTokenResolver<string, TypeParent, Context>
+    loginWithToken?: LoginWithTokenResolver<JwtToken, TypeParent, Context>
     /** Logout Resolvers */
     logout?: LogoutResolver<boolean, TypeParent, Context>
     /** Reset Password Resolvers */
     resetPassword?: ResetPasswordResolver<boolean, TypeParent, Context>
 
-    updatePassword?: UpdatePasswordResolver<string, TypeParent, Context>
+    updatePassword?: UpdatePasswordResolver<JwtToken, TypeParent, Context>
   }
 
-  export type RegisterResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type RegisterResolver<R = JwtToken, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,
@@ -244,7 +246,7 @@ export namespace MutationResolvers {
     password: string
   }
 
-  export type VerifyResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
+  export type VerifyResolver<R = JwtToken, Parent = {}, Context = IGraphQLContext> = Resolver<
     R,
     Parent,
     Context,
@@ -255,7 +257,7 @@ export namespace MutationResolvers {
   }
 
   export type LoginWithCredentialsResolver<
-    R = string,
+    R = Maybe<JwtToken>,
     Parent = {},
     Context = IGraphQLContext
   > = Resolver<R, Parent, Context, LoginWithCredentialsArgs>
@@ -265,12 +267,11 @@ export namespace MutationResolvers {
     password: string
   }
 
-  export type LoginWithTokenResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
-    R,
-    Parent,
-    Context,
-    LoginWithTokenArgs
-  >
+  export type LoginWithTokenResolver<
+    R = JwtToken,
+    Parent = {},
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context, LoginWithTokenArgs>
   export interface LoginWithTokenArgs {
     token: string
   }
@@ -295,12 +296,11 @@ export namespace MutationResolvers {
     email: string
   }
 
-  export type UpdatePasswordResolver<R = string, Parent = {}, Context = IGraphQLContext> = Resolver<
-    R,
-    Parent,
-    Context,
-    UpdatePasswordArgs
-  >
+  export type UpdatePasswordResolver<
+    R = JwtToken,
+    Parent = {},
+    Context = IGraphQLContext
+  > = Resolver<R, Parent, Context, UpdatePasswordArgs>
   export interface UpdatePasswordArgs {
     token: string
 
@@ -341,6 +341,9 @@ export interface DeprecatedDirectiveArgs {
   reason?: string
 }
 
+export interface JWTTokenScalarConfig extends GraphQLScalarTypeConfig<JwtToken, any> {
+  name: 'JWTToken'
+}
 export interface ErrorScalarConfig extends GraphQLScalarTypeConfig<Error, any> {
   name: 'Error'
 }
@@ -349,6 +352,7 @@ export interface IResolvers {
   Query?: QueryResolvers.Resolvers
   User?: UserResolvers.Resolvers
   Mutation?: MutationResolvers.Resolvers
+  JwtToken?: GraphQLScalarType
   Error?: GraphQLScalarType
 }
 

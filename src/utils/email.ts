@@ -12,9 +12,6 @@ const client: any = new SparkPost(process.env.SPARKPOST_API_KEY, {
 const sendMail: any = async ({ recipient, content, subject }: any) => {
   const response: any = await client.transmissions
     .send({
-      options: {
-        sandbox: true,
-      },
       content: {
         from: process.env.SPARKPOST_FROM_EMAIL,
         subject,

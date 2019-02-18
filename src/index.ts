@@ -54,9 +54,14 @@ const connection: Promise<Connection> = (async () => {
         clientHost: 'http://localhost:7331',
       }
 
+      /**
+       * If we are doing a register mutation, we don't expect any authorization header. Therefore
+       * we can just return the session and the user will be null.
+       */
       if (req.body.operationName === 'Register') {
         return { session, user: null }
       }
+
       // Get the user token from the headers.
       const token: string = req.headers.authorization || ''
 

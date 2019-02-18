@@ -226,7 +226,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+              "ofType": { "kind": "SCALAR", "name": "JWTToken", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -249,7 +249,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+              "ofType": { "kind": "SCALAR", "name": "JWTToken", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -279,11 +279,7 @@
                 "defaultValue": null
               }
             ],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
-            },
+            "type": { "kind": "SCALAR", "name": "JWTToken", "ofType": null },
             "isDeprecated": false,
             "deprecationReason": null
           },
@@ -305,7 +301,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+              "ofType": { "kind": "SCALAR", "name": "JWTToken", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -384,7 +380,7 @@
             "type": {
               "kind": "NON_NULL",
               "name": null,
-              "ofType": { "kind": "SCALAR", "name": "String", "ofType": null }
+              "ofType": { "kind": "SCALAR", "name": "JWTToken", "ofType": null }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -392,6 +388,16 @@
         ],
         "inputFields": null,
         "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "SCALAR",
+        "name": "JWTToken",
+        "description": "",
+        "fields": null,
+        "inputFields": null,
+        "interfaces": null,
         "enumValues": null,
         "possibleTypes": null
       },

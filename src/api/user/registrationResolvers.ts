@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt'
 import * as jwt from 'jsonwebtoken'
 
-import { IResolvers } from '../../generated/graphql'
+import { IResolvers, JwtToken } from '../../generated/graphql'
 import { getUserByEmail, User, UserRoleType, verifyUser } from '../../models/user'
 import { sendMail } from '../../utils/email'
 import { emailBodies } from '../../utils/emailContent'
@@ -39,7 +39,7 @@ const userRegistrationResolver: IResolvers = {
         await verifyRegistrationEmail.validate(args, { abortEarly: false })
       } catch (error) {
         /** If the schema doesn't match, we'll use an early return statement. */
-        return formatYupError(error)
+        throw formatYupError(error)
       }
       const { email, password } = args
 
@@ -51,7 +51,7 @@ const userRegistrationResolver: IResolvers = {
 
       /** If the user already exists, we'll use another early return statement. */
       if (userAlreadyExists) {
-        return [
+        throw [
           {
             path: 'email',
             message: DUPLICATE_EMAIL,
@@ -85,7 +85,9 @@ const userRegistrationResolver: IResolvers = {
       /** Send verification email. */
       sendMail({
         recipient: user.email,
-        content: emailBodies.sendVerifyEmail(`${session.clientHost}/validate-email/${token}`),
+        content: emailBodies.sendVerifyEmail(
+          `${session.clientHost}/validate-email/token?token=${token}`,
+        ),
         subject: 'Confirm Email',
       })
 
